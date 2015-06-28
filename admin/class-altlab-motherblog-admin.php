@@ -100,4 +100,76 @@ class Altlab_Motherblog_Admin {
 
 	}
 
+	public function shortcodes(){
+	// 	// [bartag foo="foo-value"]
+		function bartag_func( $atts ) {
+		    $a = shortcode_atts( array(
+		        'syncat' => 'uncategorized'
+		    ), $atts );
+
+		    $output = "
+		    <form action='/login' method='post'>
+			
+				<fieldset id='fs1'>
+					<div id='have-rampages'>
+						<label>Do you have a Rampages blog?</label><br/>
+						<input type='radio' name='have-rampages' value='Yes'>Yes</input>
+						<input type='radio' name='have-rampages' value='No'>No</input>
+					</div>
+
+					<div id='have-rampages-yes' style='display:none;'>
+						<p>
+							<label>Which of your blogs would you like to subscribe?</label><br/>
+							<select id='blog-select' name='blog-select'>
+						    	<option value='my-blog'>My Blog</option>
+							</select>
+						</p>
+
+						<p>Awesome! But you'll have to login before we can take the next step.</p>
+					</div>
+				</fieldset>
+				
+				<fieldset id='fs2'>
+					<div id='want-rampages' style='display:none;'>
+						<p>
+							<label>Do you want one?</label>
+							<input type='radio' name='want-rampages' value='Yes'>Yes</input>
+							<input type='radio' name='want-rampages' value='No'>No</input>
+						</p>
+					</div>
+
+					<div id='want-rampages-yes' style='display:none;'>
+						<p>Awesome! You can <a href='http://rampages.us/vcu-wp-signup.php'>get one here.</a></p>
+					</div>
+				</fieldset>
+
+				<fieldset id='fs3'>
+					<div id='have-blog' style='display:none;'>
+						<p>Do you have a blog somewhere else already?</p>
+						<input type='radio' name='have-blog' value='Yes'>Yes</input>
+						<input type='radio' name='have-blog' value='No'>No</input>
+					</div>
+
+					<div id='have-blog-yes' style='display:none;'>
+						<p>Cool, we just need the RSS feed from your site for the category you will use for this site.</p>
+						<input type='text'></input>
+						<small>If you aren't sure how to find your RSS feed, check out <a href='http://thoughtvectors.net/rss-stream/i-have-a-blog/specific/'>this page for common feed structures</a>.</small>
+					</div>
+					
+
+					<div id='have-blog-no' style='display:none;'>
+						<p>Sorry, but you have to have a blog somewhere to register.</p>
+
+						<p>Fear not, you can <a href='http://rampages.us/vcu-wp-signup.php'>get a Rampages blog</a> for free! Just come back when you're ready. 😊</p>
+					</div>
+				</fieldset>
+
+			</form>
+		    ";
+
+		    return $output;
+		}
+		add_shortcode( 'bartag', 'bartag_func' );
+	}
+
 }
