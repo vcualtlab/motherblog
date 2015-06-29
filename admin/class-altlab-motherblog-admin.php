@@ -218,6 +218,28 @@ class Altlab_Motherblog_Admin
 			    }
 			}
 
+			function get_remote_blog_info(){
+				$remote_blog = new stdClass;
+
+				if ( $_POST ){
+					$switch_to = $_POST['blog-select'];
+	                
+	                switch_to_blog($switch_to);
+	           
+	                $remote_blog->url = get_site_url();
+	                $remote_blog->name = get_bloginfo('name');
+	                
+	                // switch back to motherblog
+	                restore_current_blog();
+            	}
+
+                return $remote_blog;
+			}
+
+			// if ( $_POST ){
+			// 	echo $remote_blog->url;
+			// 	echo $remote_blog->name;
+			// }
 
 // CHECK IF USER IS LOGGED IN ?
 // IF SO SHOW ONE THING
@@ -245,7 +267,7 @@ class Altlab_Motherblog_Admin
 				<fieldset id='fs1'>
 					<div id='have-rampages'>
 						<label>Do you have a Rampages blog?</label><br/>
-						<input type='radio' name='have-rampages' value='Yes'>Yes</input>
+						<input type='radio' name='have-rampages' value='Yes'>Yes</input><br/>
 						<input type='radio' name='have-rampages' value='No'>No</input>
 					</div>
 
@@ -290,6 +312,8 @@ class Altlab_Motherblog_Admin
 					</div>
 				</fieldset>
 
+				<input id='email' type='text' name='email' size='25' value='' />
+
 				<fieldset id='submit' style='display:none;'>
 					<input type='hidden' name='submit' value='1'/>
 					<input type='submit' value='Submit' />
@@ -299,10 +323,29 @@ class Altlab_Motherblog_Admin
 		    ";
             
             if (!is_admin() && $_POST) {
-                create_remote_category( $feedwordpress_category );
-                add_current_user_to_mother_blog();
-                create_fwp_link( $feedwordpress_category );
-                create_fwp_link_off_network();
+
+            	if( $_POST['email'] ){
+            		die( '<p>An error occurred. You have not been subscribed.</p>' );
+            	}
+
+            	else if ( is_user_logged_in() && $_POST['blog-select'] && !$_POST['email'] ){
+            		create_remote_category( $feedwordpress_category );
+                	add_current_user_to_mother_blog();
+                	create_fwp_link( $feedwordpress_category );
+
+                	$output = '<p>The category "'.$a{'category'}.'" has been added to your blog "<strong>'.get_remote_blog_info()->name.'</strong>".</p>
+                	<p>Only posts you create in the "'.$a{'category'}.'" category on your blog "<strong>'.get_remote_blog_info()->name.'</strong>" will appear on this site.</p>';
+            	}
+                
+                else if  ( $_POST['blog-feed'] && !$_POST['email'] ){
+                	create_fwp_link_off_network();
+
+                	$output = "<p>You submitted the feed <a href='".$_POST['blog-feed']."'>".$_POST['blog-feed']."</a> to this site.<br/>
+                	Only posts that show in the feed you submitted will appear on this site.</p>";
+                } else {
+                	$output = "<p>An error occurred. You have not been subscribed.</p>";
+                }
+                
             }
             
             // print_r($_POST);
