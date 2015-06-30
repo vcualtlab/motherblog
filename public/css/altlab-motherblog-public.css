@@ -3,22 +3,6 @@
  * included in this file.
  */
 
-/*
-#altlab-motherblog-subscribe{
- 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 21px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 300;
-	line-height: 21px;
-}
-
-#have-rampages input{
-	margin: 10px;
-	font-size: 16px;
-	line-height: 21px;
-}*/
-
 #altlab-motherblog-subscribe #email{
 	display: none;
 }

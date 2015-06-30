@@ -41,18 +41,18 @@
     };
 
     $(function() {
-        $("input[name=have-rampages]:radio").change(function() {
+        $("input[name=have-network]:radio").change(function() {
             if ($(this).val() == 'Yes') {
-                $('#have-rampages-yes').show();
-                $('#want-rampages').hide();
-                $('#want-rampages-yes').hide();
+                $('#have-network-yes').show();
+                $('#want-network').hide();
+                $('#want-network-yes').hide();
                 $('#have-blog').hide();
                 $('#have-blog-yes').hide();
                 $('#have-blog-no').hide();
             } else {
-                $('#have-rampages-yes').hide();
-                $('#want-rampages').show();
-                $('#want-rampages-yes').hide();
+                $('#have-network-yes').hide();
+                $('#want-network').show();
+                $('#want-network-yes').hide();
                 $('#have-blog').hide();
                 $('#have-blog-yes').hide();
                 $('#have-blog-no').hide();
@@ -60,14 +60,14 @@
                 $('#submit').hide();
             }
         });
-        $("input[name=want-rampages]:radio").change(function() {
+        $("input[name=want-network]:radio").change(function() {
             if ($(this).val() == 'Yes') {
-                $('#want-rampages-yes').show();
+                $('#want-network-yes').show();
                 $('#have-blog').hide();
                 $('#have-blog-yes').hide();
                 $('#have-blog-no').hide();
             } else {
-                $('#want-rampages-yes').hide();
+                $('#want-network-yes').hide();
                 $('#have-blog').show();
                 $('#have-blog-yes').hide();
                 $('#have-blog-no').hide();

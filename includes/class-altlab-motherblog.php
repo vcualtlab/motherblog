@@ -157,6 +157,7 @@ class Altlab_Motherblog {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$plugin_admin->altlab_motherblog_options();
 		$plugin_admin->shortcodes();
 
 	}
