@@ -13,7 +13,7 @@ What does it do exactly?
 
 If user is logged in and has blogs on your network:
 
-* Create select form of blopgs owned by user on your network
+* Create select form of blogs owned by user on your network
 * Create the specified category on the child blog chosen by the user
 * Add the user to the mother blog with the role subscriber
 * Determine the URL for that category's RSS feed
