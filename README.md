@@ -7,7 +7,7 @@ FeedWordPress extension for simple front end syndication.
 
 ## Description
 
-Simplifies the MotherBlog registration process for both faculty and students thorugh a single form.
+Simplifies the MotherBlog registration process for both faculty and students through a single form.
 
 What does it do exactly?
 
