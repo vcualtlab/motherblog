@@ -1,4 +1,4 @@
-# Plugin Name
+# ALT Lab Mother Blog
 
 Requires at least: 3.0.1
 Tested up to: 4.2.2
@@ -11,27 +11,27 @@ Simplifies the MotherBlog registration process for both faculty and students tho
 
 What does it do exactly?
 
-If user is logged in and has blogs on your network.
+If user is logged in and has blogs on your network:
 
-* Create select list of user blogs on network.
-* Create the specified category on the Child Blog
-* Add the user to the Mother Blog with the role subscriber
+* Create select form of blopgs owned by user on your network
+* Create the specified category on the child blog chosen by the user
+* Add the user to the mother blog with the role subscriber
 * Determine the URL for that category's RSS feed
 * Add RSS feed to FeedWordPress.
 
-If user is not logged in and has blogs on your network.
+If user is not logged in and has blogs on your network:
 
 * Prompt user to login
 
-If user does not have blogs on your network but would like one
+If user does not have blogs on your network but would like one:
 
 * Provide signup link.
 
-If user does not have blogs on your network and does not want one
+If user does not have blogs on your network, does not want one but has their own RSS feed:
 
 * Provide field for submission of custom RSS feed
 
-If user does not have blogs on your network, does not want one, and does not have their own RSS feed
+If user does not have blogs on your network, does not want one, and does not have their own RSS feed:
 
 * Tell them they need a blog somewhere and prompt them to signup on your network
 
