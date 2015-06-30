@@ -30,6 +30,7 @@ If user does not have blogs on your network but would like one:
 If user does not have blogs on your network, does not want one but has their own RSS feed:
 
 * Provide field for submission of custom RSS feed
+* Add RSS feed to FeedWordPress
 
 If user does not have blogs on your network, does not want one, and does not have their own RSS feed:
 
