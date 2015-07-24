@@ -158,7 +158,8 @@ public function altlab_motherblog_options(){
             $a = shortcode_atts(
                 array(
                     'category' => 'uncategorized',
-                    'sub_categories' => ''
+                    'sub_categories' => '',
+                    'get_comments' => 'false'
                 ), $atts
             );
 
@@ -344,6 +345,41 @@ public function altlab_motherblog_options(){
                     wp_insert_link($linkdata, true);
                 }
             }
+
+
+
+            function create_fwp_comments_link($mother_category) {
+                if ($_POST['have-network'] === 'Yes') {
+                    
+                    // Switch to remote blog as selected by current user
+                    $switch_to = $_POST['blog-select'];
+                    switch_to_blog($switch_to);
+                    
+                    $remote_category_id = get_cat_ID( $mother_category->slug );
+                    $remote_blog_url = get_site_url();
+                    $remote_blog_name = get_bloginfo('name');
+                    
+                    // switch back to motherblog
+                    restore_current_blog();
+                    
+                    $fwp_link_category = get_terms('link_category', $args = 'name__like=Contributors');
+                    
+                    $linkdata = array("link_url" => $remote_blog_url,
+                    
+                    "link_name" => $remote_blog_name,
+                    "link_rss" => $remote_blog_url . '/comments/feed/?cat=' . $remote_category_id ,
+                    "link_category" => $fwp_link_category[0]->term_id
+                    );
+                    
+                    if (!function_exists('wp_insert_link')) {
+                        include_once (ABSPATH . '/wp-admin/includes/bookmark.php');
+                    }
+                    
+                    wp_insert_link($linkdata, true);
+                }
+            }
+
+
             
             function create_fwp_link_off_network() {
                 if ($_POST['have-network'] === 'No' && $_POST['blog-feed']) {
@@ -434,7 +470,7 @@ public function altlab_motherblog_options(){
                 $blog_select_login_prompt = "<p>Awesome! But you'll have to <a href='" . wp_login_url(get_the_permalink()) . "'>login</a> before we can take the next step.</p>";
             }
             
-            $output = "
+            $form = "
 		    <form id='altlab-motherblog-subscribe' action='" . get_the_permalink() . "' method='post'>
 			
 				<fieldset id='fs1'>
@@ -500,47 +536,53 @@ public function altlab_motherblog_options(){
 		    ";
             
             if (!is_admin() && $_POST) {
+
+                $form_response = "";
                 
                 if ($_POST['email']) {
                     die('<p>An error occurred. You have not been subscribed.</p>');
                 } 
                 else if (is_user_logged_in() && $_POST['blog-select'] && !$_POST['email']) {
-                    
+
                     // create_remote_category($mother_category);
                     create_remote_category( $a{'category'} );
                     create_remote_sub_categories( $sub_categories, get_remote_category_id($a{'category'}) );
                     add_current_user_to_mother_blog();
                     create_fwp_link($mother_category);
+
+                    if( $a{'get_comments'} === 'true' ){
+                        create_fwp_comments_link($mother_category);
+                    }
                     
                     if ( $sub_categories ){
-                       $output .= '<p>The following category and sub categories have been added your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>';
-                       $output .= list_created_categories( $a{'category'},$sub_categories );
-                       $output .= '<p>Only posts you create in these categories on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
+                       $form_response .= '<p>The following category and sub categories have been added your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>';
+                       $form_response .= list_created_categories( $a{'category'},$sub_categories );
+                       $form_response .= '<p>Only posts you create in these categories on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
 
                     } else {
-                        $output = '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>
+                        $form_response = '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>
                     <p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
                     }
 
-                    
+                    return $form_response;
+
                 } 
                 else if ($_POST['blog-feed'] && !$_POST['email']) {
                     create_fwp_link_off_network();
                     
-                    $output = "<p>You submitted the feed <a href='" . $_POST['blog-feed'] . "'>" . $_POST['blog-feed'] . "</a> to this site.<br/>
+                    $form_response = "<p>You submitted the feed <a href='" . $_POST['blog-feed'] . "'>" . $_POST['blog-feed'] . "</a> to this site.<br/>
                 	Only posts that show in the feed you submitted will appear on this site.</p>";
+
+                    return $form_response;
                 } 
                 else {
-                    $output = "<p>An error occurred. You have not been subscribed.</p>";
+                    $form_response = "<p>An error occurred. You have not been subscribed.</p>";
+
+                    return $form_response;
                 }
             }
             
-            // print_r($_POST);
-            
-            // echo '<br/>spit out some vars <br/>';
-            // echo $_POST['have-network'];
-            
-            return $output;
+            return $form;
         }
         add_shortcode('altlab-motherblog', 'altlab_motherblog_func');
     }
