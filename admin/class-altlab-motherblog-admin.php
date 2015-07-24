@@ -301,9 +301,9 @@ public function altlab_motherblog_options(){
             }
 
             function get_network_signup_url() {
-            	$network_signup_url = get_option('altlab_motherblog_options')['network-signup-url'];
+            	$network_signup_url = get_option('altlab_motherblog_options');
 
-            	return $network_signup_url;
+            	return $network_signup_url['network-signup-url'];
             }
             
             if (is_user_logged_in()) {
