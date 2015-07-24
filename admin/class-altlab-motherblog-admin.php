@@ -112,14 +112,14 @@ public function altlab_motherblog_options(){
 
 	// Add menu page
 	function altlab_motherblog_add_page() {
-		add_options_page('Ozh\'s Sample Options', 'Sample Options', 'manage_options', 'altlab_motherblog', 'altlab_motherblog_do_page');
+		add_options_page('ALT Lab Mother Blog Options', 'Mother Blog Options', 'manage_options', 'altlab_motherblog', 'altlab_motherblog_do_page');
 	}
 
 	// Draw the menu page itself
 	function altlab_motherblog_do_page() {
 		?>
 		<div class="wrap">
-			<h2>Ozh's Sample Options</h2>
+			<h2>ALT Lab Mother Blog Options</h2>
 			<form method="post" action="options.php">
 				<?php settings_fields('altlab_motherblog_options'); ?>
 				<?php $options = get_option('altlab_motherblog_options'); ?>
