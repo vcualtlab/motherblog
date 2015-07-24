@@ -16,7 +16,7 @@
  * Plugin Name:       ALT Lab MotherBlog
  * Plugin URI:        https://github.com/vcualtlab/motherblog
  * Description:       FeedWordPress extension for simple front end syndication.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Mark Luetke
  * Author URI:        http://luetkemj.github.io
  * License:           WTFPL

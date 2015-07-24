@@ -163,6 +163,39 @@ public function altlab_motherblog_options(){
             );
 
 
+    
+            /**
+             * List categories for output
+             *
+             * @since   1.1.0
+             * @var     string  $category           $a{category} from shortcode args
+             * @var     string  $sub_categories     $a{sub_categories} from shortcode args
+             * 
+             * @return  string  HTML list of sub categories from the shortcode args
+             */
+            function list_created_categories($category, $sub_categories){
+                $category_list = "<ul><li>".$category;
+
+                if ($sub_categories){
+
+                    $sub_categories = str_replace(' ', '', $sub_categories);
+                    $array = explode(',',$sub_categories);
+
+                    $category_list .= "<ul>";
+                        foreach ($array as $item) {
+                            $category_list .= "<li>".$item."</li>";
+                        }
+                    $category_list .= "</ul>";
+                    
+                }
+
+                $category_list .= "</li></ul>";
+
+                return $category_list;
+
+            }
+
+
             function create_category( $string ){
                 
                 wp_insert_term( $string, 'category' );
@@ -476,16 +509,20 @@ public function altlab_motherblog_options(){
                     // create_remote_category($mother_category);
                     create_remote_category( $a{'category'} );
                     create_remote_sub_categories( $sub_categories, get_remote_category_id($a{'category'}) );
-
-                    // echo $sub_categories;
-                    // print_r( $mother_category );
-                    
                     add_current_user_to_mother_blog();
                     create_fwp_link($mother_category);
                     
-                    $output = '<p>The category "' . $a{'category'} . '" has been added to your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>
-                	<p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
+                    if ( $sub_categories ){
+                       $output .= '<p>The following category and sub categories have been added your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>';
+                       $output .= list_created_categories( $a{'category'},$sub_categories );
+                       $output .= '<p>Only posts you create in these categories on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
 
+                    } else {
+                        $output = '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>
+                    <p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
+                    }
+
+                    
                 } 
                 else if ($_POST['blog-feed'] && !$_POST['email']) {
                     create_fwp_link_off_network();
