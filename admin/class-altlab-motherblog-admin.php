@@ -196,7 +196,6 @@ public function altlab_motherblog_options(){
 
             }
 
-
             function create_category( $string ){
                 
                 wp_insert_term( $string, 'category' );
@@ -366,7 +365,7 @@ public function altlab_motherblog_options(){
                     
                     $linkdata = array("link_url" => $remote_blog_url,
                     
-                    "link_name" => $remote_blog_name,
+                    "link_name" => $remote_blog_name . ' comments',
                     "link_rss" => $remote_blog_url . '/comments/feed/?cat=' . $remote_category_id ,
                     "link_category" => $fwp_link_category[0]->term_id
                     );
@@ -405,21 +404,65 @@ public function altlab_motherblog_options(){
                 }
             }
 
-            
-            function get_remote_blog_info() {
-                $remote_blog = new stdClass;
+
+
+
+
+
+
+
+            /**
+             * Get dtails of remote blog
+             *
+             * @since 1.1.0
+             * @var     $blogID     id of blog to switch to
+             * @var     $category   term_object
+             *
+             * @return  array()  
+             */
+
+            // function get_remote_blog_details( $blogID, $category ){
+
+            //     switch_to_blog($blogID);
                 
-                if ($_POST) {
-                    $switch_to = $_POST['blog-select'];
+            //         $array = array(
+            //             "category_id" => get_cat_ID( $category->slug ),
+            //             "url" => get_site_url(),
+            //             "name" => get_bloginfo('name'),
+            //             "feed_url" => get_site_url() . '/category/' . $category->slug . '/feed',
+            //             "comments_feed_url" => get_site_url() . '/comments/feed/?cat=' . get_cat_ID( $category->slug )
+            //         );
+
+            //     restore_current_blog();
+
+            //     return $array;
+
+            // }
+
+
+            /**
+             * Get details of remote blog
+             *
+             * @since 1.0.0
+             * @var     $blogID     id of blog to switch to
+             * @var     $category   term_object
+             *
+             * @return  array()  
+             */
+            
+            function get_remote_blog_info( $blogID, $category ) {
+                $remote_blog = new stdClass;
                     
-                    switch_to_blog($switch_to);
+                    switch_to_blog($blogID);
                     
                     $remote_blog->url = get_site_url();
                     $remote_blog->name = get_bloginfo('name');
+                    $remote_blog->category_id = get_cat_ID( $category->slug );
+                    $remote_blog->feed_url = get_site_url() . '/category/' . $category->slug . '/feed';
+                    $remote_blog->comments_feed_url = get_site_url() . '/comments/feed/?cat=' . get_cat_ID( $category->slug );
                     
                     // switch back to motherblog
-                    restore_current_blog();
-                }
+                restore_current_blog();
                 
                 return $remote_blog;
             }
@@ -438,6 +481,30 @@ public function altlab_motherblog_options(){
             }
 
 
+            /**
+             * Check if blog is already signed up
+             *
+             * @since 1.1.0
+             * @var     $remote_blog    object containing details about the remote blog we are trying to signup
+             *
+             * @return  array()  
+             */
+
+            function check_for_dupes( $remote_blog ){
+                $args = array(
+                    'limit'          => -1, 
+                    'category_name'  => 'Contributors'
+                );
+
+                $links = get_bookmarks( $args );
+
+                foreach ( $links as $link ){
+                    if ( $link->link_rss === $remote_blog->feed_url ){
+                        die('<p>This blog is already subscribed.</p>');
+                    }
+                } 
+            }
+
 
 
 
@@ -448,6 +515,7 @@ public function altlab_motherblog_options(){
             } else {
                 $mother_category = create_category( $a{'category'} );
             }
+
 
             // set $sub_categories var
             $sub_categories = $a{'sub_categories'};
@@ -544,24 +612,34 @@ public function altlab_motherblog_options(){
                 } 
                 else if (is_user_logged_in() && $_POST['blog-select'] && !$_POST['email']) {
 
-                    // create_remote_category($mother_category);
+
+
+
+
+
+
+                    $remote_blog = get_remote_blog_info( $_POST['blog-select'], $mother_category );
+
+                    check_for_dupes( $remote_blog );
+
+
                     create_remote_category( $a{'category'} );
-                    create_remote_sub_categories( $sub_categories, get_remote_category_id($a{'category'}) );
+                    create_remote_sub_categories( $sub_categories, $remote_blog->category_id );
                     add_current_user_to_mother_blog();
-                    create_fwp_link($mother_category);
+                    create_fwp_link( $mother_category );
 
                     if( $a{'get_comments'} === 'true' ){
                         create_fwp_comments_link($mother_category);
                     }
                     
                     if ( $sub_categories ){
-                       $form_response .= '<p>The following category and sub categories have been added your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>';
+                       $form_response .= '<p>The following category and sub categories have been added your blog "<strong>' . $remote_blog->name . '</strong>".</p>';
                        $form_response .= list_created_categories( $a{'category'},$sub_categories );
-                       $form_response .= '<p>Only posts you create in these categories on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
+                       $form_response .= '<p>Only posts you create in these categories on your blog "<strong>' . $remote_blog->name . '</strong>" will appear on this site.</p>';
 
                     } else {
-                        $form_response = '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>
-                    <p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
+                        $form_response = '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . $remote_blog->name . '</strong>".</p>
+                    <p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . $remote_blog->name . '</strong>" will appear on this site.</p>';
                     }
 
                     return $form_response;
@@ -584,6 +662,7 @@ public function altlab_motherblog_options(){
             
             return $form;
         }
+
         add_shortcode('altlab-motherblog', 'altlab_motherblog_func');
     }
 }
