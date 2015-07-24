@@ -138,10 +138,7 @@ public function altlab_motherblog_options(){
 
 	// Sanitize and validate input. Accepts an array, return a sanitized array.
 	function altlab_motherblog_validate($input) {
-		// Our first value is either 0 or 1
-		// $input['option1'] = ( $input['option1'] == 1 ? 1 : 0 );
-		
-		// Say our second option must be safe text with no HTML tags
+
 		$input['network-signup-url'] =  wp_filter_nohtml_kses($input['network-signup-url']);
 		
 		return $input;
@@ -158,17 +155,99 @@ public function altlab_motherblog_options(){
     public function shortcodes() {
         
         function altlab_motherblog_func($atts) {
-            $a = shortcode_atts(array('category' => 'uncategorized'), $atts);
-            
-            $feedwordpress_category = get_term_by('name', $a{'category'}, 'category');
-            
-            // check if selected category exists - if not create it
-            if (!$feedwordpress_category) {
-                wp_insert_term($a{'category'}, 'category');
-                $feedwordpress_category = get_term_by('name', $a{'category'}, 'category');
+            $a = shortcode_atts(
+                array(
+                    'category' => 'uncategorized',
+                    'sub_categories' => ''
+                ), $atts
+            );
+
+
+            function create_category( $string ){
+                
+                wp_insert_term( $string, 'category' );
+                $category = get_term_by('name', $string, 'category');
+
+                return $category;
             }
+
+            function create_remote_category($string) {
+                
+                if ($_POST['have-network'] === 'Yes') {
+                                        
+                    // Get blog id we will switch to for remote category creation
+                    // $entry, 1 comes from form input where user selects blog.
+                    $switch_to = $_POST['blog-select'];
+                    
+                    // https://codex.wordpress.org/WPMU_Functions/switch_to_blog
+                    switch_to_blog($switch_to);
+                    
+                        create_category( $string );
+                    
+                    restore_current_blog();
+                }
+            }
+
+
+            function create_sub_categories($string, $category){
+                
+                if ($string){
+                    
+                    $string = str_replace(' ', '', $string);
+                    $array = explode(',',$string);
+
+                    foreach( $array as $item ){
+                        
+                        $the_sub_category = get_term_by('name', $item, 'category');
+                        
+                        if( !$the_sub_category ){
+
+                            $args = array(
+                                'parent' => $category->term_id
+                            );
+                            wp_insert_term( $item, 'category', $args );
+                        }   
+                    }
+                }
+            }
+
+            function create_remote_sub_categories($string, $category) {
+                
+                if ($_POST['have-network'] === 'Yes') {
+                                        
+                    // Get blog id we will switch to for remote category creation
+                    // $entry, 1 comes from form input where user selects blog.
+                    $switch_to = $_POST['blog-select'];
+                    
+                    // https://codex.wordpress.org/WPMU_Functions/switch_to_blog
+                    switch_to_blog($switch_to);
+                    
+                        create_sub_categories($string, $category);
+                    
+                    restore_current_blog();
+                }
+            }
+
+            function get_remote_category_id($string){
+                if ($_POST['have-network'] === 'Yes') {
+                                        
+                    // Get blog id we will switch to for remote category creation
+                    // $entry, 1 comes from form input where user selects blog.
+                    $switch_to = $_POST['blog-select'];
+                    
+                    // https://codex.wordpress.org/WPMU_Functions/switch_to_blog
+                    switch_to_blog($switch_to);
+                    
+                        $remote_category_id = get_term_by('name', $string, 'category');
+
+                    restore_current_blog();
+
+                    return $remote_category_id;
+                }
+            }
+
             
-            function current_user_blogs() {
+            function get_current_user_blogs() {
                 
                 $user_id = get_current_user_id();
                 $user_blogs = get_blogs_of_user($user_id);
@@ -182,39 +261,21 @@ public function altlab_motherblog_options(){
                 return $choices;
             }
             
-            function create_remote_category($feedwordpress_category) {
-                
-                if ($_POST['have-network'] === 'Yes') {
-                    
-                    // $feedwordpress_category = get_term_by('name', $a{'category'}, 'category');
-                    
-                    // Get blog id we will switch to for remote category creation
-                    // $entry, 1 comes from form input where user selects blog.
-                    $switch_to = $_POST['blog-select'];
-                    
-                    // https://codex.wordpress.org/WPMU_Functions/switch_to_blog
-                    switch_to_blog($switch_to);
-                    
-                    // https://codex.wordpress.org/Function_Reference/wp_insert_term
-                    wp_insert_term($feedwordpress_category->name, 'category');
-                    
-                    restore_current_blog();
-                }
-            }
+            
             
             function add_current_user_to_mother_blog() {
                 
                 if ($_POST['have-network'] === 'Yes') {
                     
-                    $user_id = get_current_user_id();
                     $blog_id = get_current_blog_id();
+                    $user_id = get_current_user_id();
                     $role = 'subscriber';
                     
                     add_user_to_blog($blog_id, $user_id, $role);
                 }
             }
             
-            function create_fwp_link($feedwordpress_category) {
+            function create_fwp_link($mother_category) {
                 if ($_POST['have-network'] === 'Yes') {
                     
                     // Switch to remote blog as selected by current user
@@ -235,7 +296,7 @@ public function altlab_motherblog_options(){
                     "link_name" => $remote_blog_name,
                     
                     // varchar, the title of the link
-                    "link_rss" => $remote_blog_url . '/category/' . $feedwordpress_category->slug . '/feed',
+                    "link_rss" => $remote_blog_url . '/category/' . $mother_category->slug . '/feed',
                     
                     // varchar, a URL of an associated RSS feed
                     "link_category" => $fwp_link_category[0]->term_id
@@ -274,6 +335,7 @@ public function altlab_motherblog_options(){
                     wp_insert_link($linkdata, true);
                 }
             }
+
             
             function get_remote_blog_info() {
                 $remote_blog = new stdClass;
@@ -305,14 +367,32 @@ public function altlab_motherblog_options(){
 
             	return $network_signup_url['network-signup-url'];
             }
-            
+
+
+
+
+
+
+            // set $mother_category var
+            if ( get_term_by('name', $a{'category'}, 'category') ){
+                $mother_category = get_term_by('name', $a{'category'}, 'category');
+            } else {
+                $mother_category = create_category( $a{'category'} );
+            }
+
+            // set $sub_categories var
+            $sub_categories = $a{'sub_categories'};
+
+            // create sub cats if they don't exist already
+            create_sub_categories($sub_categories, $mother_category);
+
             if (is_user_logged_in()) {
                 
                 $blog_select = "
 				<p>
 					<label>Which of your blogs would you like to subscribe?</label><br/>
 					<select id='blog-select' name='blog-select'>
-				    	<option value=''>Select your blog</option>" . current_user_blogs() . "</select>
+				    	<option value=''>Select your blog</option>" . get_current_user_blogs() . "</select>
 				</p>";
                 $blog_select_login_prompt = "";
             } 
@@ -392,12 +472,20 @@ public function altlab_motherblog_options(){
                     die('<p>An error occurred. You have not been subscribed.</p>');
                 } 
                 else if (is_user_logged_in() && $_POST['blog-select'] && !$_POST['email']) {
-                    create_remote_category($feedwordpress_category);
+                    
+                    // create_remote_category($mother_category);
+                    create_remote_category( $a{'category'} );
+                    create_remote_sub_categories( $sub_categories, get_remote_category_id($a{'category'}) );
+
+                    // echo $sub_categories;
+                    // print_r( $mother_category );
+                    
                     add_current_user_to_mother_blog();
-                    create_fwp_link($feedwordpress_category);
+                    create_fwp_link($mother_category);
                     
                     $output = '<p>The category "' . $a{'category'} . '" has been added to your blog "<strong>' . get_remote_blog_info()->name . '</strong>".</p>
                 	<p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . get_remote_blog_info()->name . '</strong>" will appear on this site.</p>';
+
                 } 
                 else if ($_POST['blog-feed'] && !$_POST['email']) {
                     create_fwp_link_off_network();
