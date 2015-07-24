@@ -261,24 +261,6 @@ public function altlab_motherblog_options(){
                 }
             }
 
-            function get_remote_category_id($string){
-                if ($_POST['have-network'] === 'Yes') {
-                                        
-                    // Get blog id we will switch to for remote category creation
-                    // $entry, 1 comes from form input where user selects blog.
-                    $switch_to = $_POST['blog-select'];
-                    
-                    // https://codex.wordpress.org/WPMU_Functions/switch_to_blog
-                    switch_to_blog($switch_to);
-                    
-                        $remote_category_id = get_term_by('name', $string, 'category');
-
-                    restore_current_blog();
-
-                    return $remote_category_id;
-                }
-            }
-
             
             function get_current_user_blogs() {
                 
@@ -294,8 +276,7 @@ public function altlab_motherblog_options(){
                 return $choices;
             }
             
-            
-            
+    
             function add_current_user_to_mother_blog() {
                 
                 if ($_POST['have-network'] === 'Yes') {
@@ -405,41 +386,6 @@ public function altlab_motherblog_options(){
             }
 
 
-
-
-
-
-
-
-            /**
-             * Get dtails of remote blog
-             *
-             * @since 1.1.0
-             * @var     $blogID     id of blog to switch to
-             * @var     $category   term_object
-             *
-             * @return  array()  
-             */
-
-            // function get_remote_blog_details( $blogID, $category ){
-
-            //     switch_to_blog($blogID);
-                
-            //         $array = array(
-            //             "category_id" => get_cat_ID( $category->slug ),
-            //             "url" => get_site_url(),
-            //             "name" => get_bloginfo('name'),
-            //             "feed_url" => get_site_url() . '/category/' . $category->slug . '/feed',
-            //             "comments_feed_url" => get_site_url() . '/comments/feed/?cat=' . get_cat_ID( $category->slug )
-            //         );
-
-            //     restore_current_blog();
-
-            //     return $array;
-
-            // }
-
-
             /**
              * Get details of remote blog
              *
@@ -504,6 +450,9 @@ public function altlab_motherblog_options(){
                     }
                 } 
             }
+
+
+
 
 
 
@@ -612,16 +561,9 @@ public function altlab_motherblog_options(){
                 } 
                 else if (is_user_logged_in() && $_POST['blog-select'] && !$_POST['email']) {
 
-
-
-
-
-
-
                     $remote_blog = get_remote_blog_info( $_POST['blog-select'], $mother_category );
 
                     check_for_dupes( $remote_blog );
-
 
                     create_remote_category( $a{'category'} );
                     create_remote_sub_categories( $sub_categories, $remote_blog->category_id );
