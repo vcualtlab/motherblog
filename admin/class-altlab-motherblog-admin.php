@@ -164,7 +164,6 @@ public function altlab_motherblog_options(){
             );
 
 
-    
             /**
              * List categories for output
              *
@@ -254,7 +253,7 @@ public function altlab_motherblog_options(){
                     
                     // https://codex.wordpress.org/WPMU_Functions/switch_to_blog
                     switch_to_blog($switch_to);
-                    
+
                         create_sub_categories($string, $category);
                     
                     restore_current_blog();
@@ -285,7 +284,10 @@ public function altlab_motherblog_options(){
                     $user_id = get_current_user_id();
                     $role = 'subscriber';
                     
-                    add_user_to_blog($blog_id, $user_id, $role);
+                    if(! is_user_member_of_blog( $user_id, $blog_id ) ){
+                        add_user_to_blog($blog_id, $user_id, $role);
+                    }
+                    
                 }
             }
             
@@ -391,23 +393,23 @@ public function altlab_motherblog_options(){
              *
              * @since 1.0.0
              * @var     $blogID     id of blog to switch to
-             * @var     $category   term_object
+             * @var     $category   term_object ( should be string? cause we don't yet even have an object to give it yet I don't think... )
              *
              * @return  array()  
              */
             
             function get_remote_blog_info( $blogID, $category ) {
                 $remote_blog = new stdClass;
-                    
-                    switch_to_blog($blogID);
+                
+                switch_to_blog($blogID);
                     
                     $remote_blog->url = get_site_url();
                     $remote_blog->name = get_bloginfo('name');
-                    $remote_blog->category_id = get_cat_ID( $category->slug );
+                    $remote_blog->term_id = get_cat_ID( $category->slug );
                     $remote_blog->feed_url = get_site_url() . '/category/' . $category->slug . '/feed';
                     $remote_blog->comments_feed_url = get_site_url() . '/comments/feed/?cat=' . get_cat_ID( $category->slug );
-                    
-                    // switch back to motherblog
+                        
+                // switch back to motherblog
                 restore_current_blog();
                 
                 return $remote_blog;
@@ -561,13 +563,18 @@ public function altlab_motherblog_options(){
                 } 
                 else if (is_user_logged_in() && $_POST['blog-select'] && !$_POST['email']) {
 
+                    create_remote_category( $a{'category'} );
+
                     $remote_blog = get_remote_blog_info( $_POST['blog-select'], $mother_category );
 
                     check_for_dupes( $remote_blog );
 
-                    create_remote_category( $a{'category'} );
-                    create_remote_sub_categories( $sub_categories, $remote_blog->category_id );
+                    
+                    
+                    create_remote_sub_categories( $sub_categories, $remote_blog );
+                    
                     add_current_user_to_mother_blog();
+                    
                     create_fwp_link( $mother_category );
 
                     if( $a{'get_comments'} === 'true' ){
