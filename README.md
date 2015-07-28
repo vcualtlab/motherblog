@@ -51,6 +51,11 @@ If user does not have blogs on your network, does not want one, and does not hav
 
 ## Changelog
 
+v1.2
+ * Prevent duplicate signup
+ * Prevent current user role change on signup
+ * Add comments feed signup
+
 v1.1
 
  * Added support for auto creation of sub categories
