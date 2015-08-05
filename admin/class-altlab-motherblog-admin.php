@@ -274,7 +274,37 @@ public function altlab_motherblog_options(){
                 
                 return $choices;
             }
-            
+
+            function get_blogs_of_current_user_by_role() {
+
+                $user_id = get_current_user_id();
+                $role = 'administrator';
+
+                $blogs = get_blogs_of_user( $user_id );
+
+                foreach ( $blogs as $blog_id => $blog ) {
+
+                    // Get the user object for the user for this blog.
+                    $user = new WP_User( $user_id, '', $blog_id );
+
+                    // Remove this blog from the list if the user doesn't have the role for it.
+                    if ( ! in_array( $role, $user->roles ) ) {
+                        unset( $blogs[ $blog_id ] );
+                    }
+                }
+
+                return $blogs;
+            }
+
+            function create_blogs_dropdown($blogs){
+                $choices = '';
+
+                foreach ($blogs as $blog) {
+                    $choices.= "<option value='" . $blog->userblog_id . "'>" . $blog->blogname . "</option>";
+                }
+
+                return $choices;
+            }
     
             function add_current_user_to_mother_blog() {
                 
@@ -480,7 +510,7 @@ public function altlab_motherblog_options(){
 				<p>
 					<label>Which of your blogs would you like to subscribe?</label><br/>
 					<select id='blog-select' name='blog-select'>
-				    	<option value=''>Select your blog</option>" . get_current_user_blogs() . "</select>
+				    	<option value=''>Select your blog</option>" . create_blogs_dropdown( get_blogs_of_current_user_by_role() ) . "</select>
 				</p>";
                 $blog_select_login_prompt = "";
             } 
