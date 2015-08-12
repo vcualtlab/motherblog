@@ -45,8 +45,11 @@ If user does not have blogs on your network, does not want one, and does not hav
 
 1. Add a url in the plugin options for user signup to your network.
 1. Add the shortcode `[altlab-motherblog category="Some Category"]` to a page.
+1. You can also add subcategories `[altlab-motherblog category="Some Category" sub_categories = "cat1, cat2,cat3, cat4"]`
 
 ## Frequently Asked Questions
+1. People are signing up. Why don't I see sites showing up under Syndication?
+* Go to Links in your Dashboard. You should see the sites there. You may need to add them to the Contributor category. Usually this only needs to be done once.
 
 
 ## Changelog
