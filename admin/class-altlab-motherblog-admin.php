@@ -455,6 +455,10 @@ public function altlab_motherblog_options(){
             function get_network_signup_url() {
             	$network_signup_url = get_option('altlab_motherblog_options');
 
+                if ( !$network_signup_url && ( $_SERVER['HTTP_HOST'] === 'rampages.us' ) ){
+                    $network_signup_url['network-signup-url'] = "http://rampages.us/vcu-wp-signup.php";
+                }
+
             	return $network_signup_url['network-signup-url'];
             }
 
