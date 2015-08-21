@@ -41,11 +41,13 @@ If user does not have blogs on your network, does not want one, and does not hav
 1. Upload `altlab-motherblog.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
-## Usage
+## Quick Start
 
-1. Add a url in the plugin options for user signup to your network.
-1. Add the shortcode `[altlab-motherblog category="Some Category"]` to a page.
-1. You can also add subcategories `[altlab-motherblog category="Some Category" sub_categories = "cat1, cat2, cat3, cat4"]`
+1. Make sure FeedWordPress plugin is installed and activated
+1. Install and activate ALT Lab Mother Blog
+1. Add a url in the plugin options (Setting > Mother Blog options) for user signup to your network.
+1. Add the shortcode `[altlab-motherblog category="some-category"]` to a page.
+1. You can also add subcategories `[altlab-motherblog category="some-category" sub_categories = "cat1, cat2, cat3, cat4"]`
 1. You can also gather comments by adding `get_comments="true"`
 
 ## Frequently Asked Questions
