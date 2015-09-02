@@ -616,13 +616,17 @@ public function altlab_motherblog_options(){
                     }
                     
                     if ( $sub_categories ){
+                       $form_response .= '<h2>SUCCESS!</h2>';
                        $form_response .= '<p>The following category and sub categories have been added your blog "<strong>' . $remote_blog->name . '</strong>".</p>';
                        $form_response .= list_created_categories( $a{'category'},$sub_categories );
                        $form_response .= '<p>Only posts you create in these categories on your blog "<strong>' . $remote_blog->name . '</strong>" will appear on this site.</p>';
+                       $form_response .= '<a href="' . $remote_blog->url . '">Return to your site '.$remote_blog->name.'</a>';
 
                     } else {
-                        $form_response = '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . $remote_blog->name . '</strong>".</p>
+                        $form_response .= '<h2>SUCCESS!</h2>';
+                        $form_response .= '<p>The category "<strong>' . $a{'category'} . '</strong>" has been added to your blog "<strong>' . $remote_blog->name . '</strong>".</p>
                     <p>Only posts you create in the "' . $a{'category'} . '" category on your blog "<strong>' . $remote_blog->name . '</strong>" will appear on this site.</p>';
+                        $form_response .= '<a href="' . $remote_blog->url . '">Return to your site '.$remote_blog->name.'</a>';
                     }
 
                     return $form_response;
@@ -631,13 +635,15 @@ public function altlab_motherblog_options(){
                 else if ($_POST['blog-feed'] && !$_POST['email']) {
                     create_fwp_link_off_network();
                     
-                    $form_response = "<p>You submitted the feed <a href='" . $_POST['blog-feed'] . "'>" . $_POST['blog-feed'] . "</a> to this site.<br/>
-                	Only posts that show in the feed you submitted will appear on this site.</p>";
+                    $form_response .= '<h2>SUCCESS!</h2>';
+                    $form_response .= "<p>You submitted the feed <a href='" . $_POST['blog-feed'] . "'>" . $_POST['blog-feed'] . "</a> to this site.<br/>
+                	Only posts that appear in the feed you submitted will appear on this site.</p>";
 
                     return $form_response;
                 } 
                 else {
-                    $form_response = "<p>An error occurred. You have not been subscribed.</p>";
+                    $form_response .= "<h2>CRUSHING DEFEAT!</h2>";
+                    $form_response .= "<p>An error occurred. You have not been subscribed. But you should totally try again.</p>";
 
                     return $form_response;
                 }
