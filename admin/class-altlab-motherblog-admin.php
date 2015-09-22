@@ -482,7 +482,7 @@ public function altlab_motherblog_options(){
 
                 foreach ( $links as $link ){
                     if ( $link->link_rss === $remote_blog->feed_url ){
-                        die('<p>This blog is already subscribed.</p>');
+                        die('<p>This blog is already connected.</p>');
                     }
                 } 
             }
@@ -512,7 +512,7 @@ public function altlab_motherblog_options(){
                 
                 $blog_select = "
 				<p>
-					<label>Which of your blogs would you like to subscribe?</label><br/>
+					<label>Which of your blogs would you like to connect?</label><br/>
 					<select id='blog-select' name='blog-select'>
 				    	<option value=''>Select your blog</option>" . create_blogs_dropdown( get_blogs_of_current_user_by_role() ) . "</select>
 				</p>";
@@ -593,7 +593,7 @@ public function altlab_motherblog_options(){
                 $form_response = "";
                 
                 if ($_POST['email']) {
-                    die('<p>An error occurred. You have not been subscribed.</p>');
+                    die('<p>An error occurred. You have not been connected.</p>');
                 } 
                 else if (is_user_logged_in() && $_POST['blog-select'] && !$_POST['email']) {
 
@@ -643,7 +643,7 @@ public function altlab_motherblog_options(){
                 } 
                 else {
                     $form_response .= "<h2>CRUSHING DEFEAT!</h2>";
-                    $form_response .= "<p>An error occurred. You have not been subscribed. But you should totally try again.</p>";
+                    $form_response .= "<p>An error occurred. You have not been connected. But you should totally try again.</p>";
 
                     return $form_response;
                 }
