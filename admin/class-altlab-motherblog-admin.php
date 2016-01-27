@@ -196,7 +196,7 @@ public function altlab_motherblog_options(){
             }
 
             function create_category( $string ){
-                
+                $string = str_replace(' ', '-', $string);
                 wp_insert_term( $string, 'category' );
                 $category = get_term_by('name', $string, 'category');
 
