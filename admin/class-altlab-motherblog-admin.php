@@ -644,6 +644,11 @@ public function altlab_motherblog_options(){
                 else {
                     $form_response .= "<h2>CRUSHING DEFEAT!</h2>";
                     $form_response .= "<p>An error occurred. You have not been connected. But you should totally try again.</p>";
+                    $form_response .= "<p>An error occurred. You have not been subscribed. But you should totally try again.</p>";
+                    $form_response = "<p>An error occurred. You have not been connected.</p>";
+                    $form_response .= "<h2>CRUSHING DEFEAT!</h2>";
+                    $form_response .= "<p>An error occurred. You have not been subscribed. But you should totally try again.</p>";
+
 
                     return $form_response;
                 }

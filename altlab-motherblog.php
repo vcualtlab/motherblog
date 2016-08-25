@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       ALT Lab MotherBlog
  * Plugin URI:        https://github.com/vcualtlab/motherblog
- * Description:       FeedWordPress extension for simple front end syndication.
+ * Description:       FeedWordPress extension for simple front end syndication. Example shortcode [altlab-motherblog category="some-category" sub_categories = "cat1, cat2, cat3, cat4"]
  * Version:           1.2.0
  * Author:            Mark Luetke
  * Author URI:        http://luetkemj.github.io
