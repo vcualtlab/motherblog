@@ -334,10 +334,11 @@ public function altlab_motherblog_options(){
                     // switch back to motherblog
                     restore_current_blog();
                     
-                    $fwp_link_category = get_terms('link_category', $args = 'name__like=Contributors');
+                    $fwp_link_category = FeedWordPress::link_category_id();
                     
                     $linkdata = array("link_url" => $remote_blog_url,
                     
+
                     // varchar, the URL the link points to
                     "link_name" => $remote_blog_name,
                     
@@ -345,8 +346,8 @@ public function altlab_motherblog_options(){
                     "link_rss" => $remote_blog_url . '/category/' . $mother_category->slug . '/feed',
                     
                     // varchar, a URL of an associated RSS feed
-                    "link_category" => $fwp_link_category[0]->term_id
-                    
+                    "link_category" => $fwp_link_category
+
                     // int, the term ID of the link category. if empty, uses default link category
                     );
                     
@@ -356,8 +357,8 @@ public function altlab_motherblog_options(){
                     
                     wp_insert_link($linkdata, true);
                 }
-            }
 
+            }
 
 
             function create_fwp_comments_link($mother_category) {
