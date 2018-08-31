@@ -215,6 +215,7 @@ public function altlab_motherblog_options(){
                     switch_to_blog($switch_to);
                     
                         create_category( $string );
+                        flush_rewrite_rules();
                     
                     restore_current_blog();
                 }
