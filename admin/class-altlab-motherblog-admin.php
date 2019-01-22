@@ -234,7 +234,7 @@ public function altlab_motherblog_options(){
                         $the_sub_category = get_term_by('name', $item, 'category');
                      
                         if( !$the_sub_category || (int)$the_sub_category->parent != (int)$category->term_id  ){
-
+                            //expanded if statement to deal with duplicate sub cats on destination blog
                             $args = array(
                                 'parent' => $category->term_id,
                             );
