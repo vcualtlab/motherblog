@@ -232,13 +232,13 @@ public function altlab_motherblog_options(){
                     foreach( $array as $item ){
                         
                         $the_sub_category = get_term_by('name', $item, 'category');
-                        
-                        if( !$the_sub_category ){
+                     
+                        if( !$the_sub_category || (int)$the_sub_category->parent != (int)$category->term_id  ){
 
                             $args = array(
-                                'parent' => $category->term_id
+                                'parent' => $category->term_id,
                             );
-                            wp_insert_term( $item, 'category', $args );
+                            wp_insert_term( $item, 'category', $args );                           
                         }   
                     }
                 }
