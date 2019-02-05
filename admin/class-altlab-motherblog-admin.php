@@ -102,47 +102,47 @@ class Altlab_Motherblog_Admin
 public function altlab_motherblog_options(){
 
 
-	add_action('admin_init', 'altlab_motherblog_init' );
-	add_action('admin_menu', 'altlab_motherblog_add_page');
+    add_action('admin_init', 'altlab_motherblog_init' );
+    add_action('admin_menu', 'altlab_motherblog_add_page');
 
-	// Init plugin options to white list our options
-	function altlab_motherblog_init(){
-		register_setting( 'altlab_motherblog_options', 'altlab_motherblog_options', 'altlab_motherblog_validate' );
-	}
+    // Init plugin options to white list our options
+    function altlab_motherblog_init(){
+        register_setting( 'altlab_motherblog_options', 'altlab_motherblog_options', 'altlab_motherblog_validate' );
+    }
 
-	// Add menu page
-	function altlab_motherblog_add_page() {
-		add_options_page('ALT Lab Mother Blog Options', 'Mother Blog Options', 'manage_options', 'altlab_motherblog', 'altlab_motherblog_do_page');
-	}
+    // Add menu page
+    function altlab_motherblog_add_page() {
+        add_options_page('ALT Lab Mother Blog Options', 'Mother Blog Options', 'manage_options', 'altlab_motherblog', 'altlab_motherblog_do_page');
+    }
 
-	// Draw the menu page itself
-	function altlab_motherblog_do_page() {
-		?>
-		<div class="wrap">
-			<h2>ALT Lab Mother Blog Options</h2>
-			<form method="post" action="options.php">
-				<?php settings_fields('altlab_motherblog_options'); ?>
-				<?php $options = get_option('altlab_motherblog_options'); ?>
-				<table class="form-table">
-					<tr valign="top"><th scope="row">Network signup page URL.</th>
-						<td><input type="text" name="altlab_motherblog_options[network-signup-url]" value="<?php echo $options['network-signup-url']; ?>" /></td>
-					</tr>
-				</table>
-				<p class="submit">
-				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-				</p>
-			</form>
-		</div>
-		<?php	
-	}
+    // Draw the menu page itself
+    function altlab_motherblog_do_page() {
+        ?>
+        <div class="wrap">
+            <h2>ALT Lab Mother Blog Options</h2>
+            <form method="post" action="options.php">
+                <?php settings_fields('altlab_motherblog_options'); ?>
+                <?php $options = get_option('altlab_motherblog_options'); ?>
+                <table class="form-table">
+                    <tr valign="top"><th scope="row">Network signup page URL.</th>
+                        <td><input type="text" name="altlab_motherblog_options[network-signup-url]" value="<?php echo $options['network-signup-url']; ?>" /></td>
+                    </tr>
+                </table>
+                <p class="submit">
+                <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                </p>
+            </form>
+        </div>
+        <?php   
+    }
 
-	// Sanitize and validate input. Accepts an array, return a sanitized array.
-	function altlab_motherblog_validate($input) {
+    // Sanitize and validate input. Accepts an array, return a sanitized array.
+    function altlab_motherblog_validate($input) {
 
-		$input['network-signup-url'] =  wp_filter_nohtml_kses($input['network-signup-url']);
-		
-		return $input;
-	}
+        $input['network-signup-url'] =  wp_filter_nohtml_kses($input['network-signup-url']);
+        
+        return $input;
+    }
 
 }
     
@@ -233,11 +233,12 @@ public function altlab_motherblog_options(){
                         
                         $the_sub_category = get_term_by('name', $item, 'category');
                      
-                        if( !$the_sub_category || (int)$the_sub_category->parent != (int)$category->term_id  ){
-                            //expanded if statement to deal with duplicate sub cats on destination blog
+                        if( !$the_sub_category || (int)$the_sub_category->parent != (int)$category->term_id){
+                            //expanded if statement to deal with duplicate sub cats on destination blog 
                             $args = array(
-                                'parent' => $category->term_id,
+                                'parent' => (int)$category->term_id
                             );
+
                             wp_insert_term( $item, 'category', $args );                           
                         }   
                     }
@@ -455,13 +456,13 @@ public function altlab_motherblog_options(){
             }
 
             function get_network_signup_url() {
-            	$network_signup_url = get_option('altlab_motherblog_options');
+                $network_signup_url = get_option('altlab_motherblog_options');
 
                 if ( !$network_signup_url && ( $_SERVER['HTTP_HOST'] === 'rampages.us' ) ){
                     $network_signup_url['network-signup-url'] = "http://rampages.us/vcu-wp-signup.php";
                 }
 
-            	return $network_signup_url['network-signup-url'];
+                return $network_signup_url['network-signup-url'];
             }
 
 
@@ -513,11 +514,11 @@ public function altlab_motherblog_options(){
             if (is_user_logged_in()) {
                 
                 $blog_select = "
-				<p>
-					<label>Which of your blogs would you like to connect?</label><br/>
-					<select id='blog-select' name='blog-select'>
-				    	<option value=''>Select your blog</option>" . create_blogs_dropdown( get_blogs_of_current_user_by_role() ) . "</select>
-				</p>";
+                <p>
+                    <label>Which of your blogs would you like to connect?</label><br/>
+                    <select id='blog-select' name='blog-select'>
+                        <option value=''>Select your blog</option>" . create_blogs_dropdown( get_blogs_of_current_user_by_role() ) . "</select>
+                </p>";
                 $blog_select_login_prompt = "";
             } 
             else {
@@ -526,69 +527,69 @@ public function altlab_motherblog_options(){
             }
             
             $form = "
-		    <form id='altlab-motherblog-subscribe' action='" . get_the_permalink() . "' method='post'>
-			
-				<fieldset id='fs1'>
-					<div id='have-network'>
-						<p>
-							<label>Do you have a " . get_network_name() . " blog?</label><br/>
-							<input type='radio' name='have-network' value='Yes'>Yes</input><br/>
-							<input type='radio' name='have-network' value='No'>No</input>
-						</p>
-					</div>
+            <form id='altlab-motherblog-subscribe' action='" . get_the_permalink() . "' method='post'>
+            
+                <fieldset id='fs1'>
+                    <div id='have-network'>
+                        <p>
+                            <label>Do you have a " . get_network_name() . " blog?</label><br/>
+                            <input type='radio' name='have-network' value='Yes'>Yes</input><br/>
+                            <input type='radio' name='have-network' value='No'>No</input>
+                        </p>
+                    </div>
 
-					<div id='have-network-yes' style='display:none;'>
-						" . $blog_select . "
-						" . $blog_select_login_prompt . "
-					</div>
-				</fieldset>
-				
-				<fieldset id='fs2'>
-					<div id='want-network' style='display:none;'>
-						<p>
-							<label>Do you want one?</label><br/>
-							<input type='radio' name='want-network' value='Yes'>Yes</input><br/>
-							<input type='radio' name='want-network' value='No'>No</input>
-						</p>
-					</div>
+                    <div id='have-network-yes' style='display:none;'>
+                        " . $blog_select . "
+                        " . $blog_select_login_prompt . "
+                    </div>
+                </fieldset>
+                
+                <fieldset id='fs2'>
+                    <div id='want-network' style='display:none;'>
+                        <p>
+                            <label>Do you want one?</label><br/>
+                            <input type='radio' name='want-network' value='Yes'>Yes</input><br/>
+                            <input type='radio' name='want-network' value='No'>No</input>
+                        </p>
+                    </div>
 
-					<div id='want-network-yes' style='display:none;'>
-						<p>Awesome! You can <a href='" . get_network_signup_url() . "'>get one here.</a></p>
-					</div>
-				</fieldset>
+                    <div id='want-network-yes' style='display:none;'>
+                        <p>Awesome! You can <a href='" . get_network_signup_url() . "'>get one here.</a></p>
+                    </div>
+                </fieldset>
 
-				<fieldset id='fs3'>
-					<div id='have-blog' style='display:none;'>
-						<p>
-							<label>Do you have a blog somewhere else already?</label><br/>
-							<input type='radio' name='have-blog' value='Yes'>Yes</input><br/>
-							<input type='radio' name='have-blog' value='No'>No</input>
-						</p>
-					</div>
+                <fieldset id='fs3'>
+                    <div id='have-blog' style='display:none;'>
+                        <p>
+                            <label>Do you have a blog somewhere else already?</label><br/>
+                            <input type='radio' name='have-blog' value='Yes'>Yes</input><br/>
+                            <input type='radio' name='have-blog' value='No'>No</input>
+                        </p>
+                    </div>
 
-					<div id='have-blog-yes' style='display:none;'>
-						<p>Cool, we just need the RSS feed from your site for the category you will use for this site.</p>
-						<input id='blog-feed' type='text' name='blog-feed'></input>
-						<small>If you aren't sure how to find your RSS feed, check out <a href='http://thoughtvectors.net/rss-stream/i-have-a-blog/specific/'>this page for common feed structures</a>.</small>
-					</div>
-					
+                    <div id='have-blog-yes' style='display:none;'>
+                        <p>Cool, we just need the RSS feed from your site for the category you will use for this site.</p>
+                        <input id='blog-feed' type='text' name='blog-feed'></input>
+                        <small>If you aren't sure how to find your RSS feed, check out <a href='http://thoughtvectors.net/rss-stream/i-have-a-blog/specific/'>this page for common feed structures</a>.</small>
+                    </div>
+                    
 
-					<div id='have-blog-no' style='display:none;'>
-						<p>Sorry, but you have to have a blog somewhere to register.</p>
+                    <div id='have-blog-no' style='display:none;'>
+                        <p>Sorry, but you have to have a blog somewhere to register.</p>
 
-						<p>Fear not, you can <a href='".get_network_signup_url()."'>get a " . get_network_name() . " blog</a> for free! Just come back when you're ready. 😊</p>
-					</div>
-				</fieldset>
+                        <p>Fear not, you can <a href='".get_network_signup_url()."'>get a " . get_network_name() . " blog</a> for free! Just come back when you're ready. 😊</p>
+                    </div>
+                </fieldset>
 
-				<input id='email' type='text' name='email' size='25' value='' />
+                <input id='email' type='text' name='email' size='25' value='' />
 
-				<fieldset id='submit' style='display:none;'>
-					<input type='hidden' name='submit' value='1'/>
-					<input type='submit' value='Submit' />
-				</fieldset>
+                <fieldset id='submit' style='display:none;'>
+                    <input type='hidden' name='submit' value='1'/>
+                    <input type='submit' value='Submit' />
+                </fieldset>
 
-			</form>
-		    ";
+            </form>
+            ";
             
             if (!is_admin() && $_POST) {
 
@@ -639,7 +640,7 @@ public function altlab_motherblog_options(){
                     
                     $form_response .= '<h2>SUCCESS!</h2>';
                     $form_response .= "<p>You submitted the feed <a href='" . $_POST['blog-feed'] . "'>" . $_POST['blog-feed'] . "</a> to this site.<br/>
-                	Only posts that appear in the feed you submitted will appear on this site.</p>";
+                    Only posts that appear in the feed you submitted will appear on this site.</p>";
 
                     return $form_response;
                 } 
