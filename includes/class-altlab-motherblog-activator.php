@@ -30,7 +30,7 @@ class Altlab_Motherblog_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+		update_option( 'feedwordpress_automatic_updates', 'init', true );//set FWP settings to run prior to page load if you want after page 'shutdown' rather than 'init'
 	}
 
 }
