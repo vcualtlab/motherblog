@@ -554,7 +554,7 @@ public function altlab_motherblog_options(){
                     </div>
 
                     <div id='want-network-yes' style='display:none;'>
-                        <p>Awesome! You can <a href='" . get_network_signup_url() . "'>get one here.</a></p>
+                        <p>Awesome! You can <a href='" . wp_registration_url() . "'>get one here.</a></p>
                     </div>
                 </fieldset>
 
